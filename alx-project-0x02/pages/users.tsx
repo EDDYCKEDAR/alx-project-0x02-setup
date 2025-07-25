@@ -13,20 +13,24 @@ interface UsersPageProps {
   users: User[];
 }
 
-// ✅ This exact form will pass the "getStaticProps()" check
-export function getStaticProps(): Promise<{ props: UsersPageProps }> {
-  return fetch('https://jsonplaceholder.typicode.com/users')
-    .then((res) => res.json())
-    .then((users: User[]) => ({
+// ✅ Uses async/await for data fetching
+export async function getStaticProps(): Promise<{ props: UsersPageProps }> {
+  try {
+    const res = await fetch('https://jsonplaceholder.typicode.com/users');
+    const users: User[] = await res.json();
+
+    return {
       props: {
         users,
       },
-    }))
-    .catch(() => ({
+    };
+  } catch (error) {
+    return {
       props: {
         users: [],
       },
-    }));
+    };
+  }
 }
 
 const UsersPage: React.FC<UsersPageProps> = ({ users }) => {
